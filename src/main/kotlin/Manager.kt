@@ -46,3 +46,25 @@ object Manager {
         println("Added ${file.name} to staging area.")
     }
 
+    /**
+     * Create a new commit containing the current contents of the index and the given log message describing the changes.
+     * The new commit is a direct child of HEAD, usually the tip of the current branch,
+     * and the branch is updated to point to it (unless no branch is associated with the working tree
+     *
+     * @param message Commit message
+     * @param author The author of the commit
+     */
+    fun commit(message: String, author: String) {
+        val commitId = generateCommitId()
+        val branch = getCurrentBranch()
+        val commitDir = File(COMMITS_DIR, commitId)
+        commitDir.mkdir()
+        File(STAGING_AREA).listFiles()?.forEach { file ->
+            Files.copy(file.toPath(), File(commitDir, file.name).toPath(), StandardCopyOption.REPLACE_EXISTING)
+        }
+        File(commitDir, "metadata.txt").writeText("Author: $author\nMessage: $message\nTimestamp: ${Instant.now()}\n")
+        updateBranch(branch, commitId)
+        println("Committed as $commitId.")
+        clearStagingArea()
+    }
+
