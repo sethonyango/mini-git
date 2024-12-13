@@ -115,3 +115,18 @@ Limitations
 - Conflict resolution is not implemented.
 
 - Limited diff visualization.
+
+## Reflection Questions
+
+### What do you love most about computing?
+
+I love the ability to solve real-world problems through logic and creativity. 
+Computing  empowers us to automate repetitive tasks, create experiences, and analyze large amounts of data. 
+The experience of solving day to day tasks is very satisfying.
+
+### If you could meet any scientist or engineer who died before A.D. 2000, whom would you choose, and why?
+
+I would choose Alan Turing. His groundbreaking work in computation and cryptography laid the foundation for modern computer science.
+His ability to conceptualize the "Turing Machine" demonstrate both brilliance and perseverance, it was genius.
+Meeting him would be an incredible opportunity to discuss his vision for AI.
+
