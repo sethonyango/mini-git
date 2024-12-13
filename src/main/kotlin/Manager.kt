@@ -30,3 +30,19 @@ object Manager {
         createBranch("main")
         println("Initialized empty repository in ${repoDir.absolutePath}")
     }
+
+    /**
+     * Add file changes to staging area.
+     * Similar to git add
+     *
+     * @param filePath the file to add to staging
+     */
+    fun add(filePath: String) {
+        val file = File(filePath)
+        if (!file.exists()) throw IllegalArgumentException("File does not exist: $filePath")
+        if (isIgnored(file)) return
+        val destination = File(STAGING_AREA, file.name)
+        Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        println("Added ${file.name} to staging area.")
+    }
+
