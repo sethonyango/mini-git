@@ -68,3 +68,86 @@ object Manager {
         clearStagingArea()
     }
 
+    /**
+     * Shows the commit logs.
+     */
+    fun log() {
+        val branch = getCurrentBranch()
+        var commitId = getBranchHead(branch)
+        while (commitId != null) {
+            val commitDir = File(COMMITS_DIR, commitId)
+            println("Commit: $commitId")
+            println(commitDir.resolve("metadata.txt").readText())
+            println("----")
+            commitId = commitDir.resolve("parent").takeIf { it.exists() }?.readText()
+        }
+    }
+
+    /**
+     * Generate a hashed commit ID
+     */
+    private fun generateCommitId(): String {
+        val bytes = Instant.now().toString().toByteArray()
+        return MessageDigest.getInstance("SHA-1").digest(bytes).joinToString("") { "%02x".format(it) }
+    }
+
+    /**
+     * Determine if a file has been ignored
+     */
+    private fun isIgnored(file: File): Boolean {
+        val ignoreFile = File(IGNORE_FILE)
+        return ignoreFile.exists() && ignoreFile.readLines().any { file.name.matches(it.toRegex()) }
+    }
+
+    /**
+     * Delete all staged files
+     */
+    private fun clearStagingArea() {
+        File(STAGING_AREA).listFiles()?.forEach { it.delete() }
+    }
+
+    /***/
+    private fun getCurrentBranch(): String = File(HEAD).readText()
+
+    /***/
+    private fun updateBranch(branch: String, commitId: String) {
+        val branchFile = File(BRANCHES_DIR, branch)
+        branchFile.writeText(commitId)
+    }
+
+    /***/
+    private fun getBranchHead(branch: String): String? = File(BRANCHES_DIR, branch).takeIf { it.exists() }?.readText()
+
+    /***/
+    fun createBranch(name: String) {
+        File(BRANCHES_DIR, name).writeText("")
+    }
+
+    /***/
+    fun listBranches() {
+        val branches = File(BRANCHES_DIR).listFiles()?.map { it.name } ?: emptyList()
+        println("Branches:")
+        branches.forEach { println("  $it") }
+    }
+
+    /***/
+    fun switchBranch(branch: String) {
+        val branchFile = File(BRANCHES_DIR, branch)
+        if (!branchFile.exists()) throw IllegalArgumentException("Branch $branch does not exist.")
+        File(HEAD).writeText(branch)
+        println("Switched to branch $branch.")
+    }
+
+    /***/
+    fun status() {
+        val branch = getCurrentBranch()
+        println("On branch: $branch")
+        val stagedFiles = File(STAGING_AREA).listFiles()?.map { it.name } ?: emptyList()
+        if (stagedFiles.isEmpty()) {
+            println("No files staged for commit.")
+        } else {
+            println("Staged files:")
+            stagedFiles.forEach { println("  $it") }
+        }
+    }
+}
