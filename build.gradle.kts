@@ -13,6 +13,9 @@ repositories {
 }
 
 dependencies {
+    implementation("info.picocli:picocli:4.7.4")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
+    annotationProcessor("info.picocli:picocli-codegen:4.7.4")
     testImplementation(kotlin("test"))
 }
 
